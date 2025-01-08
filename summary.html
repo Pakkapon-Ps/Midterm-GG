@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: #000;
+        }
+        .navbar a {
+            color: white !important;
+        }
+        .header {
+            background-color: #ffc107;
+            color: black;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .table th, .table td {
+            text-align: center;
+        }
+        .table img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">อิ่มหมู im-moo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Order Summary</h1>
+    </div>
+
+    <!-- Order Summary Section -->
+    <div class="container mt-4">
+        <h2>รายการที่คุณเลือก</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price (บาท)</th>
+                </tr>
+            </thead>
+            <tbody id="orderSummary">
+                <!-- Order items will be dynamically inserted here -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">ส่วนลด 10% เมื่อสั่งเมนูเกิน 5 รายการ</td>
+                    <td id="discount">0 บาท</td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Total</strong></td>
+                    <td id="totalPrice">0 บาท</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Back to Menu and Checkout Buttons -->
+        <div class="d-flex justify-content-between">
+            <a href="index.html" class="btn btn-secondary">Back to Menu</a>
+            <button class="btn btn-primary" onclick="checkout()">Confirm Order</button>
+        </div>
+    </div>
+
+    <script>
+        const order = JSON.parse(localStorage.getItem('order')) || [];
+
+        function renderOrderSummary() {
+            const orderSummary = document.getElementById('orderSummary');
+            orderSummary.innerHTML = '';
+
+            let total = 0;
+            let itemCount = 0;
+            order.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${item.image}" alt="${item.name}"></td>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.price * item.quantity} บาท</td>
+                `;
+                orderSummary.appendChild(row);
+                total += item.price * item.quantity;
+                itemCount += item.quantity;
+            });
+
+            const discount = itemCount >= 5 ? total * 0.1 : 0;
+            document.getElementById('discount').textContent = `${discount.toFixed(2)} บาท`;
+            document.getElementById('totalPrice').textContent = `${(total - discount).toFixed(2)} บาท`;
+        }
+
+        function checkout() {
+            alert('Order confirmed! Thank you for choosing us.');
+            localStorage.removeItem('order');
+            window.location.href = 'index.html';
+        }
+
+        renderOrderSummary();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
